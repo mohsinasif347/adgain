@@ -122,7 +122,6 @@ export default function EarnPage() {
       }
     }, 1500);
 
-    // --- Time barhakar 15000ms (15 seconds) kar diya gaya hai ---
     const timeout = setTimeout(() => {
       setAdStatus((prev) => (prev === 'checking' ? 'blocked' : prev));
       clearInterval(checkAds);
@@ -216,7 +215,7 @@ export default function EarnPage() {
       
       <div className="absolute top-[10%] left-[-10%] w-72 h-72 bg-emerald-500/10 dark:bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <header className="px-6 pt-10 pb-6 relative z-10">
+      <header className="px-6 pt-10 pb-6 relative z-10 text-left">
         <h1 className="text-2xl font-black tracking-tight italic uppercase">Earn Zone</h1>
         <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mt-1">Watch ads and increase your balance</p>
       </header>
@@ -245,7 +244,8 @@ export default function EarnPage() {
               <h2 className="text-2xl font-black text-slate-900 dark:text-white italic text-left">
                 <AnimatedCounter to={stats.todayAds} duration={1} />
               </h2>
-              <span className="text-xs text-slate-400 mb-1 font-bold">/ 50</span>
+              {/* Daily Limit updated to 70 */}
+              <span className="text-xs text-slate-400 mb-1 font-bold">/ 70</span>
             </div>
           </div>
         </div>
@@ -269,7 +269,6 @@ export default function EarnPage() {
           ) : (
             <AnimatePresence mode="wait">
               
-              {/* STATE 1: IDLE */}
               {adState === 'idle' && (
                 <motion.div key="idle" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, y: -20 }} className="w-full flex flex-col items-center">
                   <div className="w-20 h-20 bg-blue-500/10 rounded-[2rem] flex items-center justify-center mb-6 border border-blue-500/20 shadow-inner rotate-3">
@@ -299,7 +298,7 @@ export default function EarnPage() {
                     <div className="w-full bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 dark:border-red-500/30 rounded-[1.5rem] p-4 text-left animate-in fade-in zoom-in duration-500">
                       <div className="flex items-center gap-2 text-red-500 dark:text-red-400 mb-3 text-left">
                         <AlertCircle size={18} />
-                        <h4 className="font-black text-xs uppercase tracking-widest">Ads Load Nahi Hue</h4>
+                        <h4 className="font-black text-xs uppercase tracking-widest text-left">Ads Load Nahi Hue</h4>
                       </div>
                       <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-4 leading-relaxed font-medium text-left">
                         Coins kamanay ke liye ads dekhna zaroori hai. Agar apko ads nazar nahi aa rahay to ye steps follow karein:
@@ -317,7 +316,7 @@ export default function EarnPage() {
                 </motion.div>
               )}
 
-              {/* STATE 2: WATCHING */}
+              {/* WATCHING, CAPTCHA, CLAIMING, SUCCESS states remain unchanged */}
               {adState === 'watching' && (
                 <motion.div key="watching" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }} className="w-full flex flex-col items-center">
                   <div className="relative w-32 h-32 mb-6 flex items-center justify-center">
@@ -335,14 +334,13 @@ export default function EarnPage() {
                 </motion.div>
               )}
 
-              {/* STATE 3: CAPTCHA */}
               {adState === 'captcha' && (
                 <motion.div key="captcha" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, y: -20 }} className="w-full flex flex-col items-center">
                   <div className="w-16 h-16 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center mb-4 border border-blue-500/20">
                     <ShieldCheck size={32} className="text-blue-500" />
                   </div>
-                  <h3 className="text-lg font-black uppercase tracking-wide text-slate-900 dark:text-white mb-2 text-center">Bot Check</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-6 font-medium text-center">
+                  <h3 className="text-lg font-black uppercase tracking-wide text-slate-900 dark:text-white mb-2 text-center text-left">Bot Check</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-6 font-medium text-center text-left">
                     Reward claim karne ke liye neechay diye gaye sawal ka sahi jawab likhein.
                   </p>
                   
@@ -370,23 +368,21 @@ export default function EarnPage() {
                 </motion.div>
               )}
 
-              {/* STATE 4: CLAIMING */}
               {adState === 'claiming' && (
                 <motion.div key="claiming" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center">
-                  <div className="w-16 h-16 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-4"><Loader2 size={32} className="text-blue-500 animate-spin" /></div>
+                  <div className="w-16 h-16 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 text-left"><Loader2 size={32} className="text-blue-500 animate-spin" /></div>
                   <h3 className="text-lg font-black uppercase tracking-wide">Verifying...</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mt-2">Crediting your reward</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mt-2 text-left">Crediting your reward</p>
                 </motion.div>
               )}
 
-              {/* STATE 5: SUCCESS */}
               {adState === 'success' && (
                 <motion.div key="success" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full flex flex-col items-center">
-                  <div className="w-24 h-24 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 shadow-xl relative border border-emerald-500/20">
+                  <div className="w-24 h-24 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 shadow-xl relative border border-emerald-500/20 text-left">
                     <CheckCircle2 size={48} className="text-emerald-500" />
                   </div>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase italic tracking-tight">Reward Credited!</h3>
-                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8 flex items-center justify-center gap-1.5 uppercase tracking-wide">
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase italic tracking-tight text-center">Reward Credited!</h3>
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8 flex items-center justify-center gap-1.5 uppercase tracking-wide text-center">
                     <span className="text-yellow-600 dark:text-yellow-400 font-black flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded-lg border border-yellow-500/20">+10 <Coins size={12} /></span> added.
                   </p>
                   <button onClick={resetAd} className="w-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-700 text-white font-black text-[11px] uppercase tracking-widest py-4 rounded-2xl flex items-center justify-center transition-all active:scale-95 text-center">Watch Next Ad</button>
@@ -405,7 +401,7 @@ export default function EarnPage() {
 
         <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
           <ShieldCheck size={14} className="text-slate-400 dark:text-slate-500" />
-          <p className="text-[9px] font-black tracking-[0.3em] uppercase text-slate-400 dark:text-slate-500">Anti-Cheat & VPN Detection Active</p>
+          <p className="text-[9px] font-black tracking-[0.3em] uppercase text-slate-400 dark:text-slate-500 text-center">Anti-Cheat & VPN Detection Active</p>
         </div>
 
       </main>
