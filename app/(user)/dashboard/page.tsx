@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Wallet, PlayCircle, History, LogOut, TrendingUp, Award, ArrowUpRight, ArrowDownLeft, Coins, Sun, Moon, Star } from 'lucide-react';
+import { 
+  Wallet, PlayCircle, History, TrendingUp, Award, 
+  ArrowUpRight, ArrowDownLeft, Coins, Sun, Moon, Star 
+} from 'lucide-react';
 import { motion, Variants, useMotionValue, useTransform, animate, AnimatePresence } from 'framer-motion';
 import { useTheme } from "next-themes";
 import Link from 'next/link';
@@ -38,12 +41,6 @@ export default function Dashboard() {
     fetchDashboardData();
   }, [supabase]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/';
-  };
-
-  // Level Styling Logic
   const getLevelConfig = (level: string) => {
     switch (level) {
       case 'Platinum': return { color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/20', icon: 'text-purple-400' };
@@ -54,6 +51,7 @@ export default function Dashboard() {
   };
 
   const levelStyle = getLevelConfig(data?.user_level || 'Bronze');
+  const isDark = theme === "dark";
 
   if (!mounted) return null;
 
@@ -82,20 +80,17 @@ export default function Dashboard() {
     show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
 
-  const isDark = theme === "dark";
-
   return (
     <div className="min-h-screen bg-white dark:bg-[#0b1120] text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-500">
-      
-      {/* Background Ambient Glows */}
+      {/* Background Ambient Glow */}
       <div className="absolute top-[-5%] right-[-5%] w-64 h-64 bg-blue-500/10 dark:bg-blue-900/20 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* Header Section */}
       <header className="px-6 pt-8 pb-4 flex justify-between items-center relative z-10">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest">Welcome Back</p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest text-left">Welcome Back</p>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold truncate max-w-[140px]">{data?.profile?.full_name || 'User'}</h2>
+            <h2 className="text-xl font-bold truncate max-w-[140px] text-left">{data?.profile?.full_name || 'User'}</h2>
             <div className={`${levelStyle.bg} ${levelStyle.color} ${levelStyle.border} border px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-tighter flex items-center gap-1`}>
               <Star size={10} fill="currentColor" /> {data?.user_level || 'Bronze'}
             </div>
@@ -103,37 +98,53 @@ export default function Dashboard() {
         </motion.div>
 
         <div className="flex items-center gap-3">
-          {/* THEME TOGGLE */}
-          <button
+          {/* PROFESSIONAL SLIDING THEME TOGGLE */}
+          <div 
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="relative w-14 h-8 flex items-center bg-slate-200 dark:bg-slate-800 rounded-full p-1 cursor-pointer transition-colors border border-black/5 dark:border-white/10 shadow-inner"
+            className={`relative w-16 h-8 flex items-center rounded-full p-1 cursor-pointer transition-all duration-500 border shadow-inner ${
+              isDark ? 'bg-slate-800 border-white/10 justify-end' : 'bg-slate-200 border-black/5 justify-start'
+            }`}
           >
+            {/* Background Icons */}
+            <div className="absolute inset-0 flex justify-between items-center px-2 pointer-events-none">
+              <Sun size={10} className={`${isDark ? 'text-slate-600' : 'opacity-0'} transition-opacity`} />
+              <Moon size={10} className={`${!isDark ? 'text-slate-400' : 'opacity-0'} transition-opacity`} />
+            </div>
+
+            {/* Sliding Knob */}
             <motion.div
               layout
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              className="w-6 h-6 bg-white dark:bg-blue-600 rounded-full flex items-center justify-center shadow-lg z-20"
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className={`w-6 h-6 rounded-full flex items-center justify-center shadow-lg z-20 ${
+                isDark ? 'bg-blue-600' : 'bg-white'
+              }`}
             >
               <AnimatePresence mode="wait">
                 {isDark ? (
-                  <motion.div key="moon" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                    <Moon size={12} className="text-white" />
+                  <motion.div
+                    key="moon"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Moon size={12} className="text-white fill-current" />
                   </motion.div>
                 ) : (
-                  <motion.div key="sun" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                    <Sun size={12} className="text-yellow-500" />
+                  <motion.div
+                    key="sun"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Sun size={12} className="text-yellow-500 fill-current" />
                   </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
-          </button>
-
-          <motion.button 
-            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-            onClick={handleLogout} 
-            className="p-2 bg-slate-100 dark:bg-white/5 rounded-full border border-black/5 dark:border-white/10 hover:bg-red-500/20 transition-colors"
-          >
-            <LogOut size={20} className="text-slate-500 dark:text-slate-400" />
-          </motion.button>
+          </div>
+          {/* Logout button removed for a cleaner header */}
         </div>
       </header>
 
@@ -142,7 +153,7 @@ export default function Dashboard() {
         {/* Balance Card */}
         <motion.div variants={itemVariants} className="bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-950 rounded-[2.5rem] p-8 shadow-2xl shadow-blue-500/20 border border-white/10 relative overflow-hidden group">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute top-[-10%] right-[-10%] p-4 opacity-10 text-yellow-500"><Coins size={140} /></motion.div>
-            <div className="relative z-10">
+            <div className="relative z-10 text-left">
               <p className="text-blue-100/70 text-sm font-medium">Available Balance</p>
               <div className="flex items-center gap-3 mt-2">
                   <h1 className="text-5xl font-black tracking-tighter text-white drop-shadow-md"><AnimatedCounter to={data?.profile?.balance || 0} /></h1>
@@ -161,7 +172,7 @@ export default function Dashboard() {
             </div>
         </motion.div>
 
-        {/* Stats Grid with Dynamic Level */}
+        {/* Stats Grid */}
         <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
             <div className="bg-slate-50 dark:bg-[#161e2d] border border-black/5 dark:border-white/5 p-5 rounded-3xl flex items-center gap-4 shadow-sm">
                 <div className="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500"><TrendingUp size={20} /></div>
@@ -170,7 +181,6 @@ export default function Dashboard() {
                     <p className="font-black text-slate-800 dark:text-white"><AnimatedCounter to={data?.today_ads || 0} duration={1} /></p>
                 </div>
             </div>
-            {/* DYNAMIC LEVEL CARD */}
             <div className={`${levelStyle.bg} border ${levelStyle.border} p-5 rounded-3xl flex items-center gap-4 transition-all duration-500 shadow-sm`}>
                 <div className={`w-10 h-10 bg-white/20 dark:bg-black/20 rounded-2xl flex items-center justify-center ${levelStyle.icon}`}>
                     <Award size={20} />
@@ -185,7 +195,7 @@ export default function Dashboard() {
         {/* Watch Ads Card */}
         <motion.div variants={itemVariants} className="bg-slate-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] p-6 group hover:bg-black/5 dark:hover:bg-white/10 transition-all cursor-pointer shadow-sm">
             <Link href="/earn" className="flex justify-between items-center block w-full text-left">
-                <div className="space-y-1">
+                <div className="space-y-1 text-left">
                     <h3 className="text-lg font-bold">Earn by Watching Ads</h3>
                     <p className="text-slate-500 dark:text-slate-400 text-xs flex items-center gap-1">VIP {data?.user_level} Rewards Active</p>
                 </div>
@@ -223,7 +233,7 @@ export default function Dashboard() {
                     );
                   })
                 ) : (
-                  <div className="text-center py-8 text-slate-400 bg-slate-50 dark:bg-white/5 rounded-3xl italic text-xs">Abhi koi activity nahi hai.</div>
+                  <div className="text-center py-8 text-slate-400 bg-slate-50 dark:bg-white/5 rounded-3xl italic text-xs text-left px-4">Abhi koi activity nahi hai.</div>
                 )}
             </div>
         </motion.div>

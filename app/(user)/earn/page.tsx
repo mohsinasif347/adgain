@@ -122,10 +122,11 @@ export default function EarnPage() {
       }
     }, 1500);
 
+    // --- Time barhakar 15000ms (15 seconds) kar diya gaya hai ---
     const timeout = setTimeout(() => {
       setAdStatus((prev) => (prev === 'checking' ? 'blocked' : prev));
       clearInterval(checkAds);
-    }, 8000);
+    }, 15000); 
 
     return () => {
       clearInterval(checkAds);
@@ -227,9 +228,9 @@ export default function EarnPage() {
           <div className="bg-slate-50 dark:bg-gradient-to-br dark:from-[#161e2d] dark:to-[#0b1120] border border-black/5 dark:border-white/5 p-5 rounded-[2rem] shadow-lg">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp size={16} className="text-emerald-500" />
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Today's Profit</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-left">Today's Profit</p>
             </div>
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-1.5 italic">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-1.5 italic text-left">
               <AnimatedCounter to={stats.todayEarned} />
               <Coins size={18} className="text-yellow-400" />
             </h2>
@@ -238,10 +239,10 @@ export default function EarnPage() {
           <div className="bg-slate-50 dark:bg-gradient-to-br dark:from-[#161e2d] dark:to-[#0b1120] border border-black/5 dark:border-white/5 p-5 rounded-[2rem] shadow-lg">
             <div className="flex items-center gap-2 mb-2">
               <PlayCircle size={16} className="text-blue-500" />
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Ads Watched</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-left">Ads Watched</p>
             </div>
             <div className="flex items-end gap-1">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white italic">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white italic text-left">
                 <AnimatedCounter to={stats.todayAds} duration={1} />
               </h2>
               <span className="text-xs text-slate-400 mb-1 font-bold">/ 50</span>
@@ -295,15 +296,15 @@ export default function EarnPage() {
                   )}
 
                   {adStatus === 'blocked' && (
-                    <div className="w-full bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 dark:border-red-500/30 rounded-[1.5rem] p-4 text-left">
-                      <div className="flex items-center gap-2 text-red-500 dark:text-red-400 mb-3">
+                    <div className="w-full bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 dark:border-red-500/30 rounded-[1.5rem] p-4 text-left animate-in fade-in zoom-in duration-500">
+                      <div className="flex items-center gap-2 text-red-500 dark:text-red-400 mb-3 text-left">
                         <AlertCircle size={18} />
                         <h4 className="font-black text-xs uppercase tracking-widest">Ads Load Nahi Hue</h4>
                       </div>
-                      <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-4 leading-relaxed font-medium">
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-4 leading-relaxed font-medium text-left">
                         Coins kamanay ke liye ads dekhna zaroori hai. Agar apko ads nazar nahi aa rahay to ye steps follow karein:
                       </p>
-                      <ul className="text-[10px] text-slate-500 dark:text-slate-400 space-y-2 mb-5 list-disc pl-4 font-bold leading-relaxed">
+                      <ul className="text-[10px] text-slate-500 dark:text-slate-400 space-y-2 mb-5 list-disc pl-4 font-bold leading-relaxed text-left">
                         <li>Apne mobile ki settings mein ja kar <span className="text-slate-900 dark:text-white font-black">"Private DNS"</span> ko OFF karein.</li>
                         <li>Google Playstore se sirf <span className="text-slate-900 dark:text-white font-black">1.1.1.1</span> app download kar ke connect karein.</li>
                         <li>Agar koi Ad-Blocker laga hua hai to usay band karein.</li>
@@ -360,7 +361,7 @@ export default function EarnPage() {
                   </div>
 
                   {error && (
-                    <div className="text-red-500 text-xs font-bold mb-4 animate-pulse">{error}</div>
+                    <div className="text-red-500 text-xs font-bold mb-4 animate-pulse text-center">{error}</div>
                   )}
 
                   <button onClick={handleVerifyCaptcha} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-[1.5rem] shadow-xl transition-all active:scale-95">

@@ -33,7 +33,7 @@ export default function ContactScreen() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0b1120] text-slate-900 dark:text-white px-6 pt-12 pb-32 relative overflow-hidden transition-colors duration-300">
       
-      {/* Ambient Glow - Subtle in light mode, deep in dark mode */}
+      {/* Ambient Glow */}
       <div className="absolute top-[-10%] left-[-10%] w-72 h-72 bg-blue-500/5 dark:bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Header Section */}
@@ -70,7 +70,6 @@ export default function ContactScreen() {
       >
         {/* Email Support Tile */}
         <motion.div variants={itemVariants} className="relative group">
-          {/* Hover Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 blur-xl transition-opacity pointer-events-none" />
           
           <div className="bg-slate-50 dark:bg-[#161e2d] border border-black/5 dark:border-white/5 p-6 rounded-[2.5rem] relative z-10 shadow-sm dark:shadow-none">
@@ -107,16 +106,16 @@ export default function ContactScreen() {
             sub="Fast Chat"
             color="text-emerald-600 dark:text-emerald-500"
             bg="bg-emerald-500/10"
-            href="https://wa.me/923000000000" // Yahan apna WhatsApp number add karlein
+            href="https://wa.me/923001100341"
           />
           <SupportCard 
             variants={itemVariants}
             icon={Globe} 
-            label="Website" 
-            sub="Official"
+            label="adgain.org" 
+            sub="Official Site"
             color="text-indigo-600 dark:text-indigo-500"
             bg="bg-indigo-500/10"
-            href="#"
+            href="https://adgain.org"
           />
         </div>
 
@@ -140,7 +139,6 @@ export default function ContactScreen() {
   );
 }
 
-// Helper Card Component with Theme Support
 function SupportCard({ icon: Icon, label, sub, color, bg, href, variants }: any) {
   return (
     <motion.a 

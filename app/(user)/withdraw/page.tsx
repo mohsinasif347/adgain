@@ -7,8 +7,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// Minimum withdrawal 5000 coins
-const MIN_WITHDRAWAL_COINS = 5000;
+// Minimum withdrawal updated to 700 coins
+const MIN_WITHDRAWAL_COINS = 700; 
 const CONVERSION_RATE = 1000; // 1000 Coins = $1
 
 const PAYMENT_METHODS = [
@@ -104,7 +104,6 @@ export default function WithdrawPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-dark-bg text-slate-900 dark:text-white pb-24 relative overflow-hidden transition-colors duration-300">
-      {/* Background Glows */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/5 dark:bg-primary-900/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <header className="px-6 pt-10 pb-6 flex items-center gap-4 relative z-10 sticky top-0 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-black/5 dark:border-white/5">
@@ -118,8 +117,6 @@ export default function WithdrawPage() {
       </header>
 
       <main className="px-6 pt-6 relative z-10 max-w-md mx-auto">
-        
-        {/* Available Balance Card */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-900 border border-white/10 p-6 rounded-[2.5rem] flex items-center justify-between mb-8 shadow-xl shadow-primary-600/20">
           <div>
             <p className="text-primary-100/70 text-xs font-bold uppercase tracking-wider mb-1">Total Coins</p>
@@ -143,7 +140,6 @@ export default function WithdrawPage() {
           </div>
         ) : (
           <form onSubmit={handleWithdrawRequest} className="space-y-8">
-            
             <div className="space-y-3">
               <label className="text-sm font-bold text-slate-600 dark:text-slate-300 px-1">Payment Method</label>
               <div className="grid grid-cols-3 gap-3">
@@ -180,7 +176,7 @@ export default function WithdrawPage() {
                   </div>
                   <input 
                     type="number"
-                    placeholder="Min. 5000"
+                    placeholder={`Min. ${MIN_WITHDRAWAL_COINS}`}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="w-full bg-white dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-xl py-3 pl-10 pr-20 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-primary-500 transition-colors"
