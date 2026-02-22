@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Script from 'next/script'; 
 import { createClient } from '@/utils/supabase/client';
-import { PlayCircle, CheckCircle2, TrendingUp, AlertCircle, Loader2, Coins, ShieldCheck, ShieldAlert, WifiOff } from 'lucide-react';
+import { PlayCircle, CheckCircle2, TrendingUp, AlertCircle, Loader2, Coins, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
 // --- ADSTERRA COMPONENTS FOR NEXT.JS ---
@@ -24,7 +24,8 @@ const NativeBannerAd = () => {
   }, []);
 
   return (
-    <div className="w-full flex justify-center items-center my-6 min-h-[100px] bg-white/5 rounded-[2rem] border border-white/5">
+    // ID add ki hai taake scroll yahan tak ho sake
+    <div id="native-ad-section" className="w-full flex justify-center items-center my-6 min-h-[100px] bg-white/5 rounded-[2rem] border border-white/5 scroll-mt-6">
       <div id="container-7dd8c8a16e0472e6777e8d43d7b7a739"></div>
     </div>
   );
@@ -80,7 +81,6 @@ export default function EarnPage() {
   const [timeLeft, setTimeLeft] = useState(15); 
   const [error, setError] = useState('');
   
-  // Naya State: Ad Detector ke liye
   const [adStatus, setAdStatus] = useState<'checking' | 'loaded' | 'blocked'>('checking');
 
   const fetchStats = async () => {
@@ -97,23 +97,19 @@ export default function EarnPage() {
 
   useEffect(() => { fetchStats(); }, []);
 
-  // Ad Detection Logic (Anti-Cheat)
   useEffect(() => {
     if (adState !== 'idle') return;
 
     setAdStatus('checking');
     
-    // Har 1.5 second baad check karega ke Native Banner wale div mein kuch aaya ya nahi
     const checkAds = setInterval(() => {
       const adContainer = document.getElementById('container-7dd8c8a16e0472e6777e8d43d7b7a739');
-      // Agar ad load hui hogi to innerHTML mein iframe wagera hoga
       if (adContainer && adContainer.innerHTML.length > 20) {
         setAdStatus('loaded');
         clearInterval(checkAds);
       }
     }, 1500);
 
-    // 8 seconds wait karega, agar phir bhi nahi aayi to block declare kar dega
     const timeout = setTimeout(() => {
       setAdStatus((prev) => (prev === 'checking' ? 'blocked' : prev));
       clearInterval(checkAds);
@@ -139,6 +135,11 @@ export default function EarnPage() {
     setError('');
     setAdState('watching');
     setTimeLeft(15);
+    
+    // Naya: Auto-scroll taake ad screen par nazar aaye (Impression count ho)
+    setTimeout(() => {
+      document.getElementById('native-ad-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
   };
 
   const handleClaimReward = async () => {
@@ -162,8 +163,8 @@ export default function EarnPage() {
   };
 
   const resetAd = () => {
-    setAdState('idle');
-    setTimeLeft(15);
+    // Naya: Page ko refresh karta hai taake naye sire se ad impressions milen
+    window.location.reload();
   };
 
   if (loading) {
@@ -238,7 +239,6 @@ export default function EarnPage() {
                   </span>
                 </div>
                 
-                {/* --- AD DETECTOR UI LOGIC --- */}
                 {adStatus === 'checking' && (
                   <div className="w-full py-4 rounded-[1.5rem] border border-blue-500/20 bg-blue-500/5 flex items-center justify-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest">
                     <Loader2 size={16} className="animate-spin" /> Detecting Ads...
@@ -288,7 +288,7 @@ export default function EarnPage() {
                   </div>
                 </div>
                 <h3 className="text-lg font-black uppercase text-emerald-400 animate-pulse tracking-wide">Timer Running...</h3>
-                <p className="text-[11px] text-slate-400 mt-2 max-w-[220px] font-medium leading-relaxed">View the ads below. Do not close this tab until the timer finishes.</p>
+                <p className="text-[11px] text-slate-400 mt-2 max-w-[220px] font-medium leading-relaxed">Please keep the ad visible on your screen. Do not scroll away.</p>
               </motion.div>
             )}
 
