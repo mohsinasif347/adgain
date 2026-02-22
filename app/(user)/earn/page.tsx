@@ -3,15 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Script from 'next/script'; 
 import { createClient } from '@/utils/supabase/client';
-import { PlayCircle, CheckCircle2, TrendingUp, AlertCircle, Loader2, Coins, ShieldCheck } from 'lucide-react';
+import { PlayCircle, CheckCircle2, TrendingUp, AlertCircle, Loader2, Coins, ShieldCheck, ShieldAlert, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
 // --- ADSTERRA COMPONENTS FOR NEXT.JS ---
 
-// 1. Native Banner Component (Safe Injection)
 const NativeBannerAd = () => {
   useEffect(() => {
-    // Ye script dynamically load hogi taake Next.js ka design break na ho
     const script = document.createElement('script');
     script.src = "https://inspiredalarmslower.com/7dd8c8a16e0472e6777e8d43d7b7a739/invoke.js";
     script.async = true;
@@ -19,7 +17,6 @@ const NativeBannerAd = () => {
     document.body.appendChild(script);
     
     return () => {
-      // Cleanup on unmount
       if (document.body.contains(script)) {
         document.body.removeChild(script);
       }
@@ -33,7 +30,6 @@ const NativeBannerAd = () => {
   );
 };
 
-// 2. Banner 320x50 Component (Iframe Injection)
 const SmallBannerAd = () => {
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +79,9 @@ export default function EarnPage() {
   const [adState, setAdState] = useState<'idle' | 'watching' | 'claiming' | 'success'>('idle');
   const [timeLeft, setTimeLeft] = useState(15); 
   const [error, setError] = useState('');
+  
+  // Naya State: Ad Detector ke liye
+  const [adStatus, setAdStatus] = useState<'checking' | 'loaded' | 'blocked'>('checking');
 
   const fetchStats = async () => {
     const { data, error } = await supabase.rpc('get_user_stats');
@@ -97,6 +96,34 @@ export default function EarnPage() {
   };
 
   useEffect(() => { fetchStats(); }, []);
+
+  // Ad Detection Logic (Anti-Cheat)
+  useEffect(() => {
+    if (adState !== 'idle') return;
+
+    setAdStatus('checking');
+    
+    // Har 1.5 second baad check karega ke Native Banner wale div mein kuch aaya ya nahi
+    const checkAds = setInterval(() => {
+      const adContainer = document.getElementById('container-7dd8c8a16e0472e6777e8d43d7b7a739');
+      // Agar ad load hui hogi to innerHTML mein iframe wagera hoga
+      if (adContainer && adContainer.innerHTML.length > 20) {
+        setAdStatus('loaded');
+        clearInterval(checkAds);
+      }
+    }, 1500);
+
+    // 8 seconds wait karega, agar phir bhi nahi aayi to block declare kar dega
+    const timeout = setTimeout(() => {
+      setAdStatus((prev) => (prev === 'checking' ? 'blocked' : prev));
+      clearInterval(checkAds);
+    }, 8000);
+
+    return () => {
+      clearInterval(checkAds);
+      clearTimeout(timeout);
+    };
+  }, [adState]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -155,11 +182,7 @@ export default function EarnPage() {
   return (
     <div className="min-h-screen bg-[#0b1120] text-white relative overflow-hidden pb-10">
       
-      {/* ADSTERRA SOCIAL BAR */}
-      <Script 
-        strategy="lazyOnload" 
-        src="https://inspiredalarmslower.com/74/2a/9b/742a9b26a8f2cafd6d1fc5798e1614cb.js" 
-      />
+      <Script strategy="lazyOnload" src="https://inspiredalarmslower.com/74/2a/9b/742a9b26a8f2cafd6d1fc5798e1614cb.js" />
       
       <div className="absolute top-[10%] left-[-10%] w-72 h-72 bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none"></div>
 
@@ -208,22 +231,46 @@ export default function EarnPage() {
                   <PlayCircle size={40} className="text-blue-400" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 uppercase tracking-wide">Start Earning</h3>
-                <div className="text-xs text-slate-400 mb-8 max-w-[200px] flex flex-col items-center font-medium">
+                <div className="text-xs text-slate-400 mb-6 max-w-[200px] flex flex-col items-center font-medium">
                   Watch the ads on this page and run the timer to get
                   <span className="text-yellow-400 font-black flex items-center gap-1.5 mt-2 text-base bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 shadow-lg">
                     10 <Coins size={16} className="animate-pulse" />
                   </span>
                 </div>
                 
-                {error && (
-                  <div className="flex items-center gap-2 text-red-400 bg-red-400/10 px-4 py-2 rounded-xl text-xs font-bold mb-6">
-                    <AlertCircle size={14} /> {error}
+                {/* --- AD DETECTOR UI LOGIC --- */}
+                {adStatus === 'checking' && (
+                  <div className="w-full py-4 rounded-[1.5rem] border border-blue-500/20 bg-blue-500/5 flex items-center justify-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-widest">
+                    <Loader2 size={16} className="animate-spin" /> Detecting Ads...
                   </div>
                 )}
 
-                <button onClick={startWatchingAd} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-[1.5rem] shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95">
-                  <PlayCircle size={20} /> Start Timer
-                </button>
+                {adStatus === 'loaded' && (
+                  <button onClick={startWatchingAd} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-[1.5rem] shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                    <PlayCircle size={20} /> Start Timer
+                  </button>
+                )}
+
+                {adStatus === 'blocked' && (
+                  <div className="w-full bg-red-500/10 border border-red-500/30 rounded-[1.5rem] p-4 text-left">
+                    <div className="flex items-center gap-2 text-red-400 mb-2">
+                      <ShieldAlert size={16} />
+                      <h4 className="font-black text-xs uppercase tracking-widest">Ads Blocked</h4>
+                    </div>
+                    <p className="text-[10px] text-slate-300 mb-3 leading-relaxed font-medium">
+                      We couldn't detect any ads. To earn coins, you must view the ads.
+                    </p>
+                    <ul className="text-[9px] text-slate-400 space-y-1 mb-3 list-disc pl-4 font-bold">
+                      <li>Turn OFF "Private DNS" in settings.</li>
+                      <li>Or connect to a Free VPN (e.g., 1.1.1.1).</li>
+                      <li>Disable Ad-Blockers if any.</li>
+                    </ul>
+                    <button onClick={() => window.location.reload()} className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-white text-[10px] font-bold uppercase tracking-widest active:scale-95">
+                      Refresh Page
+                    </button>
+                  </div>
+                )}
+
               </motion.div>
             )}
 
