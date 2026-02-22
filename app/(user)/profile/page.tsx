@@ -4,18 +4,25 @@ import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { 
   History, MessageCircle, ShieldCheck, 
-  LogOut, ChevronRight, ShieldAlert, DownloadCloud, Star 
+  LogOut, ChevronRight, ShieldAlert, DownloadCloud, Star, Edit2, Check, X, Loader2 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from "next-themes";
 import Link from 'next/link';
 
 export default function ProfileScreen() {
   const supabase = createClient();
+  const { theme } = useTheme();
+  
   const [userProfile, setUserProfile] = useState<any>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  
+  // Edit Name States
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // 1. Get Profile Logic
     async function getProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -25,16 +32,39 @@ export default function ProfileScreen() {
           .eq('id', user.id)
           .single();
         setUserProfile(data);
+        setNewName(data?.full_name || '');
       }
     }
     getProfile();
 
-    // 2. PWA Install Logic
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
     });
   }, [supabase]);
+
+  const handleUpdateName = async () => {
+    if (!newName.trim() || newName === userProfile.full_name) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: newName })
+        .eq('id', user.id);
+
+      if (!error) {
+        setUserProfile({ ...userProfile, full_name: newName });
+        setIsEditing(false);
+      }
+    }
+    setIsSaving(false);
+  };
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
@@ -51,65 +81,112 @@ export default function ProfileScreen() {
     window.location.href = '/';
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
-    <div className="min-h-screen bg-[#0b1120] text-white px-6 pt-12 pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-[#0b1120] text-slate-900 dark:text-white px-6 pt-12 pb-32 relative overflow-hidden transition-colors duration-300">
+      
       {/* Background Ambient Glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-72 h-72 bg-blue-600/10 dark:bg-blue-600/20 blur-[120px] pointer-events-none" />
 
       {/* Profile Header */}
-      <div className="flex flex-col items-center mb-10 text-center">
+      <div className="flex flex-col items-center mb-12 text-center relative z-10">
         <motion.div 
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          className="relative w-24 h-24 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-[2.5rem] p-1 shadow-2xl mb-4"
+          initial={{ scale: 0, rotate: -10 }} animate={{ scale: 1, rotate: 0 }}
+          className="relative w-28 h-28 mb-6"
         >
-          <div className="w-full h-full bg-[#0b1120] rounded-[2.4rem] flex items-center justify-center font-black text-3xl text-blue-500 italic">
+          {/* Animated Ring */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 rounded-[2.8rem] animate-spin-slow opacity-70 blur-[2px]" />
+          
+          <div className="absolute inset-1 bg-white dark:bg-[#0b1120] rounded-[2.6rem] flex items-center justify-center font-black text-4xl text-blue-600 dark:text-blue-500 italic shadow-inner">
             {userProfile?.full_name?.charAt(0) || 'U'}
           </div>
+          
           {/* VIP Badge */}
-          <div className="absolute -bottom-1 -right-1 bg-yellow-500 text-black p-1.5 rounded-xl border-4 border-[#0b1120]">
-            <Star size={12} fill="currentColor" />
-          </div>
+          <motion.div 
+            whileHover={{ scale: 1.2 }}
+            className="absolute -bottom-1 -right-1 bg-yellow-500 text-black p-2 rounded-2xl border-4 border-white dark:border-[#0b1120] shadow-lg"
+          >
+            <Star size={14} fill="currentColor" />
+          </motion.div>
         </motion.div>
         
-        <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-2xl font-black tracking-tight italic">
-          {userProfile?.full_name || 'Loading...'}
-        </motion.h2>
-        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1 flex items-center gap-2">
-          <ShieldCheck size={12} className="text-blue-500" /> VIP Member
-        </p>
+        {/* Name Section with Edit logic */}
+        <div className="w-full max-w-[280px] flex flex-col items-center">
+          <AnimatePresence mode="wait">
+            {!isEditing ? (
+              <motion.div 
+                key="name-display"
+                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}
+                className="flex items-center gap-3"
+              >
+                <h2 className="text-2xl font-black tracking-tight italic uppercase">
+                  {userProfile?.full_name || 'Loading...'}
+                </h2>
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className="p-1.5 bg-slate-100 dark:bg-white/5 rounded-lg text-slate-400 hover:text-blue-500 transition-colors"
+                >
+                  <Edit2 size={14} />
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="name-input"
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                className="flex items-center gap-2 bg-slate-50 dark:bg-white/5 p-1 rounded-2xl border border-blue-500/30"
+              >
+                <input 
+                  autoFocus
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="bg-transparent border-none outline-none px-3 py-1 text-lg font-bold text-blue-600 dark:text-blue-400 w-full"
+                />
+                <div className="flex items-center gap-1 pr-1">
+                  <button onClick={handleUpdateName} disabled={isSaving} className="p-2 bg-blue-600 text-white rounded-xl shadow-md">
+                    {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                  </button>
+                  <button onClick={() => setIsEditing(false)} className="p-2 bg-slate-200 dark:bg-white/10 text-slate-500 rounded-xl">
+                    <X size={16} />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mt-3 flex items-center gap-2 bg-slate-100 dark:bg-white/5 px-4 py-1.5 rounded-full border border-black/5 dark:border-white/5">
+            <ShieldCheck size={12} className="text-blue-500" /> Active VIP Account
+          </p>
+        </div>
       </div>
 
       {/* Main Menu Tiles */}
-      <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-3">
+      <div className="space-y-3 relative z-10">
         
-        {/* VIP INSTALL BUTTON - Only shows if app is installable */}
+        {/* SUPER VIP INSTALL BUTTON */}
         <AnimatePresence>
           {deferredPrompt && (
             <motion.button
-              variants={itemVariants}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
               onClick={handleInstallClick}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 p-5 rounded-[2rem] flex items-center justify-between shadow-lg shadow-blue-600/20 active:scale-95 transition-transform mb-6"
+              className="w-full relative group mb-8 overflow-hidden rounded-[2.2rem]"
             >
-              <div className="flex items-center gap-4 text-left">
-                <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center text-white">
-                  <DownloadCloud size={22} />
+              {/* Animated Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-700 group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+              
+              <div className="relative p-6 flex items-center justify-between">
+                <div className="flex items-center gap-5 text-left">
+                  <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white shadow-xl border border-white/20">
+                    <DownloadCloud size={28} className="animate-bounce" />
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-sm tracking-widest text-white leading-none">Install VIP App</p>
+                    <p className="text-[11px] text-white/70 font-bold italic mt-1.5">No Browser, No Lag. Pure Speed.</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-black uppercase text-xs tracking-widest text-white">Install AdGain VIP</p>
-                  <p className="text-[10px] text-white/70 font-bold italic">Get faster access on your home screen</p>
+                <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                  <ChevronRight size={20} className="text-white" />
                 </div>
               </div>
-              <ChevronRight size={18} className="text-white/50" />
             </motion.button>
           )}
         </AnimatePresence>
@@ -119,51 +196,47 @@ export default function ProfileScreen() {
           icon={History} 
           label="Earning History" 
           sub="Check your past ad rewards" 
-          variants={itemVariants}
         />
         <ProfileTile 
           href="/contact" 
           icon={MessageCircle} 
           label="Contact Support" 
           sub="Get VIP help instantly" 
-          variants={itemVariants}
         />
         <ProfileTile 
           href="/privacy" 
           icon={ShieldAlert} 
           label="Terms & Privacy" 
           sub="AdGain usage policies" 
-          variants={itemVariants}
         />
 
-        {/* SMALL LOGOUT BUTTON */}
+        {/* LOGOUT BUTTON */}
         <motion.button
-          variants={itemVariants}
           onClick={handleLogout}
-          className="mx-auto flex items-center justify-center gap-2 text-red-500/60 hover:text-red-500 font-black uppercase text-[10px] tracking-widest mt-12 px-6 py-3 bg-red-500/5 rounded-full border border-red-500/10 transition-all active:scale-95"
+          className="w-full flex items-center justify-center gap-2 text-red-500/80 hover:text-red-500 font-black uppercase text-[11px] tracking-widest mt-12 py-5 bg-red-500/5 dark:bg-red-500/5 rounded-[2rem] border border-red-500/10 hover:bg-red-500/10 transition-all active:scale-95"
         >
-          <LogOut size={14} /> Logout Session
+          <LogOut size={16} /> Logout Secure Session
         </motion.button>
-      </motion.div>
+      </div>
     </div>
   );
 }
 
-// Helper Component for Profile Tiles
-function ProfileTile({ href, icon: Icon, label, sub, variants }: any) {
+// Updated Helper Component for Theme Support
+function ProfileTile({ href, icon: Icon, label, sub }: any) {
   return (
-    <motion.div variants={variants}>
-      <Link href={href} className="bg-white/5 border border-white/5 p-5 rounded-[2.5rem] flex items-center justify-between group hover:bg-white/10 transition-all active:scale-[0.98]">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 transition-transform">
-            <Icon size={20} />
+    <motion.div whileTap={{ scale: 0.98 }}>
+      <Link href={href} className="bg-slate-50 dark:bg-white/5 border border-black/5 dark:border-white/5 p-5 rounded-[2.5rem] flex items-center justify-between group hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+        <div className="flex items-center gap-4 text-left">
+          <div className="w-11 h-11 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-500 shadow-inner">
+            <Icon size={22} />
           </div>
           <div>
-            <p className="font-black uppercase text-[11px] tracking-widest text-slate-200">{label}</p>
-            <p className="text-[10px] text-slate-500 font-bold italic">{sub}</p>
+            <p className="font-black uppercase text-[11px] tracking-widest text-slate-800 dark:text-slate-200">{label}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-500 font-bold italic mt-0.5">{sub}</p>
           </div>
         </div>
-        <ChevronRight size={18} className="text-slate-700 group-hover:text-white transition-colors" />
+        <ChevronRight size={18} className="text-slate-300 dark:text-slate-700 group-hover:text-blue-500 transition-colors" />
       </Link>
     </motion.div>
   );

@@ -24,30 +24,30 @@ export default function PrivacyScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-white px-6 pt-12 pb-32 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-[-5%] right-[-5%] w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none" />
+    <div className="min-h-screen bg-white dark:bg-[#0b1120] text-slate-900 dark:text-white px-6 pt-12 pb-32 relative overflow-hidden transition-colors duration-300">
+      {/* Background Glow - Light mode mein soft aur dark mein indigo */}
+      <div className="absolute top-[-5%] right-[-5%] w-72 h-72 bg-blue-500/5 dark:bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Header */}
-      <div className="mb-10">
+      <div className="mb-12 relative z-10">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 mb-6"
+          className="w-16 h-16 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center text-blue-600 dark:text-blue-500 mb-8 border border-blue-500/10"
         >
-          <Scale size={28} />
+          <Scale size={32} />
         </motion.div>
         <motion.h1 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-black italic uppercase tracking-tighter"
+          className="text-4xl font-black italic uppercase tracking-tighter leading-none"
         >
-          Terms & <br /> <span className="text-blue-500">Privacy Policy</span>
+          Terms & <br /> <span className="text-blue-600 dark:text-blue-500">Privacy Policy</span>
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-2"
+          className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mt-4"
         >
           Last Updated: {lastUpdated}
         </motion.p>
@@ -58,7 +58,7 @@ export default function PrivacyScreen() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="space-y-6"
+        className="space-y-8 relative z-10"
       >
         <PolicySection 
           icon={FileText}
@@ -91,13 +91,13 @@ export default function PrivacyScreen() {
         {/* Professional Footer Note */}
         <motion.div 
           variants={itemVariants}
-          className="p-6 rounded-[2.5rem] bg-gradient-to-br from-blue-600/20 to-transparent border border-blue-500/20 mt-8"
+          className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-gradient-to-br dark:from-blue-600/20 dark:to-transparent border border-black/5 dark:border-blue-500/20 mt-10 shadow-inner"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <CheckCircle2 size={18} className="text-blue-500" />
-            <h4 className="font-black text-xs uppercase tracking-widest">Our Commitment</h4>
+          <div className="flex items-center gap-3 mb-4">
+            <CheckCircle2 size={20} className="text-blue-600 dark:text-blue-500" />
+            <h4 className="font-black text-xs uppercase tracking-widest text-slate-800 dark:text-white">Our Commitment</h4>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed italic font-medium">
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic font-medium">
             AdGain is committed to providing a transparent earning platform. We continuously update our policies to ensure a safe and rewarding experience for all our VIP members.
           </p>
         </motion.div>
@@ -106,25 +106,26 @@ export default function PrivacyScreen() {
   );
 }
 
-// Sub-Component for scannable sections
+// Sub-Component with Theme Support
 function PolicySection({ icon: Icon, title, content, variants }: any) {
   return (
     <motion.div variants={variants} className="group">
-      <div className="flex gap-4 items-start">
-        <div className="mt-1 w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:bg-blue-600/20 group-hover:text-blue-500 transition-all">
-          <Icon size={16} />
+      <div className="flex gap-5 items-start">
+        <div className="mt-1 w-10 h-10 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:bg-blue-600 dark:group-hover:bg-blue-600/20 group-hover:text-white dark:group-hover:text-blue-500 transition-all duration-300 shadow-sm dark:shadow-none">
+          <Icon size={18} />
         </div>
         <div className="flex-1">
-          <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-200 mb-2 flex items-center justify-between">
+          <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-800 dark:text-slate-200 mb-2 flex items-center justify-between">
             {title}
-            <ChevronRight size={14} className="text-slate-800" />
+            <ChevronRight size={14} className="text-slate-300 dark:text-slate-800 group-hover:text-blue-500 transition-colors" />
           </h3>
-          <p className="text-xs text-slate-500 leading-relaxed font-medium">
+          <p className="text-[13px] text-slate-600 dark:text-slate-500 leading-relaxed font-medium">
             {content}
           </p>
         </div>
       </div>
-      <div className="h-[1px] w-full bg-white/5 mt-6" />
+      {/* Separator Line */}
+      <div className="h-[1px] w-full bg-black/5 dark:bg-white/5 mt-8" />
     </motion.div>
   );
 }

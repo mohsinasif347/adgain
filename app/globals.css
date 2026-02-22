@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary Theme (Trust - Deep Blue) */
+  /* Primary Theme */
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
   --color-primary-500: #3b82f6;
@@ -9,29 +9,41 @@
   --color-primary-700: #1d4ed8;
   --color-primary-900: #1e3a8a;
 
-  /* Earning Theme (Money/Success - Emerald Green) */
+  /* Earning Theme */
   --color-earning-50: #ecfdf5;
   --color-earning-400: #34d399;
   --color-earning-500: #10b981;
   --color-earning-600: #059669;
 
-  /* Reward Theme (Coins/Bonus - Premium Gold) */
+  /* Reward Theme */
   --color-reward-50: #fffbeb;
   --color-reward-400: #fbbf24;
   --color-reward-500: #f59e0b;
   --color-reward-600: #d97706;
 
-  /* Dark Mode & Backgrounds (Slate) */
+  /* Dark Mode & Backgrounds */
   --color-dark-bg: #0f172a;
   --color-dark-card: #1e293b;
   --color-light-bg: #f8fafc;
 }
 
-/* Bunyadi styling taake site clean lagay */
+/* --- THEME FIX FOR TAILWIND v4 --- */
+
 @layer base {
   body {
+    /* Default (Light Mode) */
     background-color: var(--color-light-bg);
     color: var(--color-dark-bg);
     font-family: system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  /* Jab html par .dark class aaye to body ka rang badlo */
+  :root.dark body {
+    background-color: var(--color-dark-bg);
+    color: white;
   }
 }
+
+/* Tailwind v4 mein dark mode class ko recognize karwane ke liye */
+@custom-variant dark (&:where(.dark, .dark *));
