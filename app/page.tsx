@@ -1,107 +1,173 @@
 "use client";
 
 import React from 'react';
-import Image from 'next/image';
-import { createClient } from '@/utils/supabase/client';
+import { 
+  PlayCircle, Coins, ShieldCheck, Zap, 
+  ArrowRight, Smartphone, TrendingUp, 
+  Linkedin, Award, Star, MousePointer2, 
+  Wallet, Sparkles
+} from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
-export default function LoginPage() {
-  const supabase = createClient();
-
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) console.error("Login error:", error.message);
-  };
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0b1120] px-6 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0b1120] text-white selection:bg-blue-500 selection:text-white font-sans overflow-x-hidden">
       
-      {/* Premium Ambient Background Glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+      {/* Mobile Optimized Background Glows */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none"></div>
+      <div className="absolute bottom-20 left-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none"></div>
 
-      {/* Logo & Branding Section */}
-      <div className="text-center mb-10 relative z-10">
+      {/* VIP Navigation */}
+      <nav className="relative z-50 px-6 py-6 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <PlayCircle size={20} className="text-white fill-current" />
+          </div>
+          <span className="text-xl font-black tracking-tighter italic uppercase">Adgain</span>
+        </div>
+        <Link href="/login" className="text-[10px] font-black uppercase tracking-widest px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md active:scale-90 transition-all">
+          Login
+        </Link>
+      </nav>
+
+      {/* Hero Section - Mobile First */}
+      <header className="relative z-10 px-6 pt-10 pb-20 text-center">
         <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="relative w-28 h-28 mx-auto mb-6"
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6"
         >
-          {/* Logo Container with Glow */}
-          <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full"></div>
-          <div className="relative w-full h-full rounded-[2.5rem] bg-[#161e2d] border border-white/10 p-4 flex items-center justify-center shadow-2xl">
-            <Image 
-              src="/icon-192x192.png" 
-              alt="AdGain Logo" 
-              width={80} 
-              height={80} 
-              priority
-              className="object-contain"
-            />
+          <Sparkles size={12} className="text-blue-400" />
+          <span className="text-[9px] font-black uppercase tracking-widest text-blue-400">Trusted by 5000+ Earners</span>
+        </motion.div>
+        
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="text-5xl font-black tracking-tighter mb-6 leading-[0.85] italic"
+        >
+          WATCH. <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 underline decoration-blue-500/30">EARN.</span> <br />
+          WITHDRAW.
+        </motion.h1>
+        
+        <motion.p 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 0.2 }} 
+          className="text-slate-400 text-sm mb-10 max-w-[280px] mx-auto font-medium leading-relaxed"
+        >
+          The most premium Ad-Reward system in Pakistan. Convert your daily 15 seconds into real cash.
+        </motion.p>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.3 }}
+          className="space-y-4"
+        >
+          <Link href="/login" className="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-[2rem] font-black text-lg shadow-xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 active:scale-95">
+            Get Your VIP Access <ArrowRight size={20} />
+          </Link>
+          <div className="flex items-center justify-center gap-6 opacity-60">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-emerald-500" />
+              <span className="text-[10px] font-bold uppercase tracking-tight">Verified Payouts</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <TrendingUp size={14} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase tracking-tight">High CPM Rate</span>
+            </div>
+          </div>
+        </motion.div>
+      </header>
+
+      {/* Stats Section */}
+      <section className="px-6 py-10 grid grid-cols-2 gap-4 relative z-10">
+        <div className="bg-white/5 border border-white/10 p-6 rounded-[2.5rem] backdrop-blur-md">
+          <Coins className="text-yellow-400 mb-3" size={24} />
+          <h3 className="text-2xl font-black italic">100%</h3>
+          <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest mt-1">Legit Earning</p>
+        </div>
+        <div className="bg-white/5 border border-white/10 p-6 rounded-[2.5rem] backdrop-blur-md">
+          <Wallet className="text-blue-400 mb-3" size={24} />
+          <h3 className="text-2xl font-black italic">Fast</h3>
+          <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest mt-1">Withdrawals</p>
+        </div>
+      </section>
+
+      {/* VIP Instructions Section */}
+      <section className="px-6 py-20 relative z-10">
+        <div className="text-left mb-12">
+          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-blue-500 mb-2">How it works</h2>
+          <h3 className="text-3xl font-black italic leading-none">VIP EARNING <br />PROCESS</h3>
+        </div>
+
+        <div className="space-y-6">
+          {[
+            { icon: <MousePointer2 size={20}/>, title: "Login Dashboard", desc: "Access your personalized VIP portal with your secure credentials." },
+            { icon: <PlayCircle size={20}/>, title: "Watch 15s Ads", desc: "Watch high-quality premium ads for just 15 seconds to trigger rewards." },
+            { icon: <Award size={20}/>, title: "Claim Coins", desc: "Solve a simple human-check bot protection and claim your 10 coins instantly." },
+            { icon: <Smartphone size={20}/>, title: "Easy Withdraw", desc: "Reach the 700 coins limit and withdraw directly to EasyPaisa or JazzCash." }
+          ].map((item, idx) => (
+            <div key={idx} className="flex gap-5 items-start p-6 bg-slate-900/50 border border-white/5 rounded-3xl">
+              <div className="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 shrink-0">
+                {item.icon}
+              </div>
+              <div className="text-left">
+                <h4 className="text-lg font-black italic">{item.title}</h4>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ABDULMAALIK VIP DEVELOPER CARD */}
+      <section className="px-6 py-24 relative z-10 bg-gradient-to-b from-transparent to-black/40">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="bg-[#161e2d] border border-white/10 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl shadow-blue-900/20"
+        >
+          {/* VIP Decoration */}
+          <div className="absolute top-0 right-0 p-6 opacity-10 rotate-12">
+            <Award size={100} className="text-blue-500" />
+          </div>
+
+          <div className="relative z-10 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 rotate-3 shadow-lg">
+              <Linkedin size={36} className="text-white" />
+            </div>
+            
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500 mb-2">Lead Developer</p>
+            <h3 className="text-3xl font-black italic mb-4">AbdulMaalik Shaikh</h3>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed mb-8 max-w-[240px] mx-auto">
+              Expert in high-performance AI webapps and secure payment ecosystems. Let's connect and build the future.
+            </p>
+
+            <a 
+              href="https://www.linkedin.com/in/abdulmaalik-shaikh-0259012b7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-white text-black font-black py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95"
+            >
+              <Linkedin size={18} className="fill-current" />
+              Enter LinkedIn Profile
+            </a>
           </div>
         </motion.div>
 
-        <motion.h1 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-4xl font-black italic tracking-tighter text-white uppercase"
-        >
-          Ad<span className="text-blue-500">Gain</span>
-        </motion.h1>
-        <p className="text-slate-500 mt-2 text-[10px] font-black uppercase tracking-[0.3em]">
-          Premium Earning Platform
-        </p>
-      </div>
-
-      {/* Login Card */}
-      <motion.div 
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="w-full max-w-sm bg-[#161e2d]/60 backdrop-blur-2xl rounded-[3rem] p-10 shadow-2xl border border-white/5 relative z-10"
-      >
-        <div className="mb-10 text-center">
-          <h2 className="text-2xl font-black text-white italic uppercase tracking-tight">Welcome VIP</h2>
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Access your dashboard</p>
+        <div className="mt-12 text-center">
+          <p className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-600">
+            Made by AbdulMaalik Shaikh
+          </p>
         </div>
+      </section>
 
-        {/* Google Login Button */}
-        <button 
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-4 bg-white hover:bg-slate-100 py-4 rounded-2xl transition-all duration-300 active:scale-95 group shadow-xl shadow-white/5"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          <span className="text-slate-900 font-black uppercase text-[11px] tracking-widest">Sign in with Google</span>
-        </button>
-
-        {/* Feature Grid */}
-        <div className="mt-12 grid grid-cols-2 gap-3">
-          <div className="p-4 bg-white/5 rounded-[2rem] border border-white/5 text-center">
-            <p className="text-blue-500 font-black text-lg italic uppercase">Fast</p>
-            <p className="text-[8px] text-slate-500 uppercase font-black mt-1 tracking-widest">Approvals</p>
-          </div>
-          <div className="p-4 bg-white/5 rounded-[2rem] border border-white/5 text-center">
-            <p className="text-emerald-500 font-black text-lg italic uppercase">Safe</p>
-            <p className="text-[8px] text-slate-500 uppercase font-black mt-1 tracking-widest">Payments</p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Bottom Footer Note */}
-      <p className="absolute bottom-8 text-[9px] text-slate-700 font-bold uppercase tracking-[0.4em] z-10">
-        AdGain Official Platform
-      </p>
+      {/* Bottom Padding for Mobile Navbar if any */}
+      <div className="h-10"></div>
     </div>
   );
 }
