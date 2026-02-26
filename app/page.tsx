@@ -21,9 +21,7 @@ export default function LandingPage() {
       {/* VIP Navigation */}
       <nav className="relative z-50 px-6 py-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <PlayCircle size={20} className="text-white fill-current" />
-          </div>
+          <img src="icon-192x192.png" alt="Adgain Logo" className="w-12 h-auto" />
           <span className="text-xl font-black tracking-tighter italic uppercase">Adgain</span>
         </div>
         <Link href="/login" className="text-[10px] font-black uppercase tracking-widest px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md active:scale-90 transition-all">
