@@ -7,9 +7,10 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// Minimum withdrawal updated to 700 coins
+// Minimum withdrawal remains 700 coins
 const MIN_WITHDRAWAL_COINS = 700; 
-const CONVERSION_RATE = 1000; // 1000 Coins = $1
+// Conversion rate updated to 2000 Coins = $1
+const CONVERSION_RATE = 2000; 
 
 const PAYMENT_METHODS = [
   { id: 'easypaisa', name: 'EasyPaisa', icon: Smartphone },
@@ -226,7 +227,7 @@ export default function WithdrawPage() {
 
             <div className="flex items-center justify-center gap-2 opacity-30">
               <CoinIcon size={12} className="text-slate-500 dark:text-slate-400" />
-              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">1000 Coins = $1 USD</p>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">{CONVERSION_RATE} Coins = $1 USD</p>
             </div>
           </form>
         )}
