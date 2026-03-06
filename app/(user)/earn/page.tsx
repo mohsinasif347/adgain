@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import { PlayCircle, CheckCircle2, TrendingUp, AlertCircle, Loader2, Coins, ShieldCheck, ShieldAlert, ShieldBan } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
-// --- ADSTERRA COMPONENTS FOR NEXT.JS ---
+// --- ADSTERRA COMPONENTS (RETAINED AS PER USER REQUEST) ---
 
 const NativeBannerAd = () => {
   useEffect(() => {
@@ -84,6 +84,27 @@ export default function EarnPage() {
   const [isVpn, setIsVpn] = useState(false);
   const [captcha, setCaptcha] = useState({ n1: 0, n2: 0, input: '' });
 
+  // VIP PropellerAds Direct Link
+  const PROPELLER_DIRECT_LINK = "https://omg10.com/4/10688823";
+
+  // Vignette Script Injection
+  useEffect(() => {
+    const vignetteScript = document.createElement('script');
+    vignetteScript.innerHTML = `
+      (function(s){
+        s.dataset.zone='10688822';
+        s.src='https://gizokraijaw.net/vignette.min.js';
+      })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+    `;
+    document.body.appendChild(vignetteScript);
+
+    return () => {
+      if (document.body.contains(vignetteScript)) {
+        document.body.removeChild(vignetteScript);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     fetch('https://ipwho.is/')
       .then(res => res.json())
@@ -116,7 +137,8 @@ export default function EarnPage() {
     
     const checkAds = setInterval(() => {
       const adContainer = document.getElementById('container-7dd8c8a16e0472e6777e8d43d7b7a739');
-      if (adContainer && adContainer.innerHTML.length > 20) {
+      // Adding additional check for Propeller scripts presence
+      if ((adContainer && adContainer.innerHTML.length > 20) || window.hasOwnProperty('__propeller_tag')) {
         setAdStatus('loaded');
         clearInterval(checkAds);
       }
@@ -154,6 +176,10 @@ export default function EarnPage() {
 
   const startWatchingAd = () => {
     setError('');
+    
+    // VIP Strategy: Opening Direct Link in new tab to trigger maximum revenue
+    window.open(PROPELLER_DIRECT_LINK, '_blank');
+
     setAdState('watching');
     setTimeLeft(15);
     
@@ -211,6 +237,15 @@ export default function EarnPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-[#0b1120] text-slate-900 dark:text-white relative overflow-hidden pb-10 transition-colors duration-300">
       
+      {/* PropellerAds Multi-tag */}
+      <Script 
+        src="https://quge5.com/88/tag.min.js" 
+        data-zone="216872" 
+        async 
+        data-cfasync="false" 
+        strategy="afterInteractive" 
+      />
+
       <Script strategy="lazyOnload" src="https://inspiredalarmslower.com/74/2a/9b/742a9b26a8f2cafd6d1fc5798e1614cb.js" />
       
       <div className="absolute top-[10%] left-[-10%] w-72 h-72 bg-emerald-500/10 dark:bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -244,7 +279,6 @@ export default function EarnPage() {
               <h2 className="text-2xl font-black text-slate-900 dark:text-white italic text-left">
                 <AnimatedCounter to={stats.todayAds} duration={1} />
               </h2>
-              {/* Daily Limit updated to 70 */}
               <span className="text-xs text-slate-400 mb-1 font-bold">/ 70</span>
             </div>
           </div>
@@ -290,7 +324,7 @@ export default function EarnPage() {
 
                   {adStatus === 'loaded' && (
                     <button onClick={startWatchingAd} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-[1.5rem] shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95">
-                      <PlayCircle size={20} /> Start Timer
+                      <PlayCircle size={20} /> Watch VIP Ad & Start Timer
                     </button>
                   )}
 
@@ -316,7 +350,6 @@ export default function EarnPage() {
                 </motion.div>
               )}
 
-              {/* WATCHING, CAPTCHA, CLAIMING, SUCCESS states remain unchanged */}
               {adState === 'watching' && (
                 <motion.div key="watching" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }} className="w-full flex flex-col items-center">
                   <div className="relative w-32 h-32 mb-6 flex items-center justify-center">
@@ -330,7 +363,7 @@ export default function EarnPage() {
                     </div>
                   </div>
                   <h3 className="text-lg font-black uppercase text-emerald-600 dark:text-emerald-400 animate-pulse tracking-wide">Timer Running...</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 max-w-[220px] font-medium leading-relaxed text-center">Please keep the ad visible on your screen. Do not scroll away.</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2 max-w-[220px] font-medium leading-relaxed text-center">Ad naye tab mein khul chuka hai. Timer poora hone tak usay band na karein.</p>
                 </motion.div>
               )}
 
@@ -393,10 +426,10 @@ export default function EarnPage() {
           )}
         </div>
 
-        {/* --- NATIVE BANNER AD --- */}
+        {/* --- NATIVE BANNER AD (Retained) --- */}
         <NativeBannerAd />
 
-        {/* --- SMALL BANNER AD --- */}
+        {/* --- SMALL BANNER AD (Retained) --- */}
         <SmallBannerAd />
 
         <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
