@@ -87,23 +87,7 @@ export default function EarnPage() {
   // VIP PropellerAds Direct Link
   const PROPELLER_DIRECT_LINK = "https://omg10.com/4/10688823";
 
-  // Vignette Script Injection
-  useEffect(() => {
-    const vignetteScript = document.createElement('script');
-    vignetteScript.innerHTML = `
-      (function(s){
-        s.dataset.zone='10688822';
-        s.src='https://gizokraijaw.net/vignette.min.js';
-      })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
-    `;
-    document.body.appendChild(vignetteScript);
-
-    return () => {
-      if (document.body.contains(vignetteScript)) {
-        document.body.removeChild(vignetteScript);
-      }
-    };
-  }, []);
+  // Vignette Script ko filhal hta diya hai taake layer block na kare
 
   useEffect(() => {
     fetch('https://ipwho.is/')
@@ -137,7 +121,6 @@ export default function EarnPage() {
     
     const checkAds = setInterval(() => {
       const adContainer = document.getElementById('container-7dd8c8a16e0472e6777e8d43d7b7a739');
-      // Adding additional check for Propeller scripts presence
       if ((adContainer && adContainer.innerHTML.length > 20) || window.hasOwnProperty('__propeller_tag')) {
         setAdStatus('loaded');
         clearInterval(checkAds);
@@ -175,9 +158,11 @@ export default function EarnPage() {
   }, [adState, timeLeft, stats.todayAds]);
 
   const startWatchingAd = () => {
+    if (adState === 'watching') return;
+
     setError('');
     
-    // VIP Strategy: Opening Direct Link in new tab to trigger maximum revenue
+    // Watch Ads button par direct link open hoga
     window.open(PROPELLER_DIRECT_LINK, '_blank');
 
     setAdState('watching');
@@ -323,8 +308,11 @@ export default function EarnPage() {
                   )}
 
                   {adStatus === 'loaded' && (
-                    <button onClick={startWatchingAd} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-[1.5rem] shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95">
-                      <PlayCircle size={20} /> Watch VIP Ad & Start Timer
+                    <button 
+                      onClick={startWatchingAd} 
+                      className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-[1.5rem] shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95"
+                    >
+                      <PlayCircle size={20} /> Watch Ad & Start Timer
                     </button>
                   )}
 
@@ -426,10 +414,7 @@ export default function EarnPage() {
           )}
         </div>
 
-        {/* --- NATIVE BANNER AD (Retained) --- */}
         <NativeBannerAd />
-
-        {/* --- SMALL BANNER AD (Retained) --- */}
         <SmallBannerAd />
 
         <div className="flex items-center justify-center gap-2 mt-4 opacity-40">
